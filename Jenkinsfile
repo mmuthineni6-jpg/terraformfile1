@@ -5,6 +5,7 @@ pipeline {
         booleanParam(name: 'TF_VALIDATE', defaultValue: true, description: '')
         booleanParam(name: 'TF_PLAN', defaultValue: true, description: '')
         booleanParam(name: 'TF_APPLY', defaultValue: false, description: '')
+        booleanParam(name: 'TF_DESTROY', defaultValue: false, description: '')
         booleanParam(name: 'TF_ALL', defaultValue: false, description: '')
     }
     stages {
@@ -16,35 +17,26 @@ pipeline {
             }
         }
         stage('Terraform Init') {
-            when {
-                expression { params.TF_INIT || params.TF_ALL }
-            }
-            steps {
-                sh 'terraform init'
-            }
+            when { expression { params.TF_INIT || params.TF_ALL } }
+            steps { sh 'terraform init' }
         }
         stage('Terraform Validate') {
-            when {
-                expression { params.TF_VALIDATE || params.TF_ALL }
-            }
-            steps {
-                sh 'terraform validate'
-            }
+            when { expression { params.TF_VALIDATE || params.TF_ALL } }
+            steps { sh 'terraform validate' }
         }
         stage('Terraform Plan') {
-            when {
-                expression { params.TF_PLAN || params.TF_ALL }
-            }
-            steps {
-                sh 'terraform plan'
-            }
+            when { expression { params.TF_PLAN || params.TF_ALL } }
+            steps { sh 'terraform plan' }
         }
         stage('Terraform Apply') {
-            when {
-                expression { params.TF_APPLY || params.TF_ALL }
-            }
+            when { expression { params.TF_APPLY || params.TF_ALL } }
+            steps { sh 'terraform apply -auto-approve' }
+        }
+        stage('Terraform Destroy') {
+            when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
-                sh 'terraform apply -auto-approve'
+                input message: "Are you sure you want to destroy all resources?"
+                sh 'terraform destroy -auto-approve'
             }
         }
     }
