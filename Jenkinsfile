@@ -11,8 +11,8 @@ pipeline {
         stage('git clone') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/lab1-organization/terraformfile1.git',
-                    credentialsId: 'github-https-creds'
+                    url: 'git@github.com:lab1-organization/terraformfile1.git',
+                    credentialsId: 'github-ssh-creds'
             }
         }
         stage('Terraform Init') {
