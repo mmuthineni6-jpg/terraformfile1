@@ -5,7 +5,7 @@ provider "aws" {
   region = var.region
 }
 
-# Filter out local zones, which are not currently supported 
+# Filter out local zones, which are not currently supported
 # with managed node groups
 data "aws_availability_zones" "available" {
   filter {
@@ -73,30 +73,43 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    one = {
-      name = "node-group-1"
+  frontend = {
+    name = "frontend"
 
-      instance_types = ["t3.small"]
+    instance_types = ["t2.small"]
 
-      min_size     = 1
-      max_size     = 3
-      desired_size = 2
-    }
+    min_size     = 1
+    max_size     = 2
+    desired_size = 1
 
-    two = {
-      name = "node-group-2"
+    bootstrap_extra_args = "--kubelet-extra-args '--node-labels=application=reactjs'"
+  }
 
-      instance_types = ["t3.small"]
+  java-backend = {
+    name = "java-backend"
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
-    }
+    instance_types = ["t2.small"]
+
+    min_size     = 1
+    max_size     = 2
+    desired_size = 1
+
+    bootstrap_extra_args = "--kubelet-extra-args '--node-labels=application=java'"
+  }
+
+  database = {
+    name = "database"
+    instance_types = ["t3.medium"]
+
+    min_size     = 1
+    max_size     = 2
+    desired_size = 1
+
+    bootstrap_extra_args = "--kubelet-extra-args '--node-labels=type=database'"
   }
 }
 
-
-# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
+# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
@@ -110,5 +123,5 @@ module "irsa-ebs-csi" {
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-} 
+}
 */
