@@ -76,7 +76,7 @@ module "eks" {
   frontend = {
     name = "frontend"
 
-    instance_types = ["t2.small"]
+    instance_types = ["t3.small"]
 
     min_size     = 1
     max_size     = 2
@@ -88,7 +88,7 @@ module "eks" {
   java-backend = {
     name = "java-backend"
 
-    instance_types = ["t2.small"]
+    instance_types = ["t3.small"]
 
     min_size     = 1
     max_size     = 2
@@ -99,7 +99,7 @@ module "eks" {
 
   database = {
     name = "database"
-    instance_types = ["t3.medium"]
+    instance_types = ["t3.small"]
 
     min_size     = 1
     max_size     = 2
