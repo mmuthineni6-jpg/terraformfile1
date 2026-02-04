@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    environment {
+        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+        AWS_DEFAULT_REGION    = 'us-east-1'
+    }
     parameters {
         booleanParam(name: 'TF_INIT', defaultValue: true, description: '')
         booleanParam(name: 'TF_VALIDATE', defaultValue: true, description: '')
@@ -9,13 +14,6 @@ pipeline {
         booleanParam(name: 'TF_ALL', defaultValue: false, description: '')
     }
     stages {
-        stage('git clone') {
-            steps {
-                git branch: 'main',
-                    url: 'git@github.com:lab1-organization/terraformfile1.git',
-                    credentialsId: 'github-ssh-creds'
-            }
-        }
         stage('Terraform Init') {
             when { expression { params.TF_INIT || params.TF_ALL } }
             steps { sh 'terraform init' }
@@ -26,16 +24,19 @@ pipeline {
         }
         stage('Terraform Plan') {
             when { expression { params.TF_PLAN || params.TF_ALL } }
-            steps { sh 'terraform plan' }
+            steps { sh 'terraform plan -out=tfplan' }
         }
         stage('Terraform Apply') {
             when { expression { params.TF_APPLY || params.TF_ALL } }
-            steps { sh 'terraform apply -auto-approve' }
+            steps {
+                input message: 'Apply changes?'
+                sh 'terraform apply tfplan'
+            }
         }
         stage('Terraform Destroy') {
             when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
-                input message: "Are you sure you want to destroy all resources?"
+                input message: "Destroy all resources?"
                 sh 'terraform destroy -auto-approve'
             }
         }
