@@ -1,10 +1,5 @@
 pipeline {
     agent any
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
-        AWS_DEFAULT_REGION    = 'us-east-1'
-    }
     parameters {
         booleanParam(name: 'TF_INIT', defaultValue: true, description: '')
         booleanParam(name: 'TF_VALIDATE', defaultValue: true, description: '')
