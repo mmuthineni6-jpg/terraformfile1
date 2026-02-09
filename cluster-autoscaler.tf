@@ -7,4 +7,5 @@ module "cluster_autoscaler" {
   cluster_identity_oidc_issuer      = module.eks.cluster_oidc_issuer_url
   cluster_identity_oidc_issuer_arn  = module.eks.oidc_provider_arn
   aws_region                        = var.region
+  helm_chart_version                = "9.37.0"
 }
