@@ -24,7 +24,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0.5"
     }
-
+    helm = {
+      source  = "string     orp/helm"
+      version = "~> 2.7.0"
+    }
     cloudinit = {
       source  = "hashicorp/cloudinit"
       version = "~> 2.3.4"
