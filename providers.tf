@@ -3,7 +3,7 @@ data "aws_eks_cluster" "cluster" {
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = var.cluster_name
+  name = "education-eks"
 }
 
 provider "kubernetes" {
