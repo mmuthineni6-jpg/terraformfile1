@@ -8,7 +8,7 @@ terraform {
   #     name = "learn-terraform-eks"
   #   }
   # }
-
+terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -24,13 +24,20 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0.5"
     }
+
     helm = {
       source  = "hashicorp/helm"
       version = "~> 2.7.0"
     }
+
     cloudinit = {
       source  = "hashicorp/cloudinit"
       version = "~> 2.3.4"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.23.0"   # stay on v2.x
     }
   }
 
