@@ -1,9 +1,5 @@
-data "aws_eks_cluster" "cluster" {
-  name = "education-eks"
-}
-
 data "aws_eks_cluster_auth" "cluster" {
-  name = "education-eks"
+  name = "module.eks.cluster_name"
 }
 
 provider "kubernetes" {
