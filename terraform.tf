@@ -18,6 +18,11 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6.1"
     }
+    
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.13.0"  
+    }
 
     tls = {
       source  = "hashicorp/tls"
