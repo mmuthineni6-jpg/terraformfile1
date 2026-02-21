@@ -10,16 +10,22 @@ pipeline {
     }
     stages {
         stage('Terraform Init') {
-            when { expression { params.TF_INIT || params.TF_ALL } }
-            steps { sh 'terraform init' }
+            when { expression { params.TF_INIT || params.TF_ALL || params.TF_DESTROY } }
+            steps { 
+                sh 'terraform init -upgrade' 
+            }
         }
         stage('Terraform Validate') {
             when { expression { params.TF_VALIDATE || params.TF_ALL } }
-            steps { sh 'terraform validate' }
+            steps { 
+                sh 'terraform validate' 
+            }
         }
         stage('Terraform Plan') {
             when { expression { params.TF_PLAN || params.TF_ALL } }
-            steps { sh 'terraform plan -out=tfplan' }
+            steps { 
+                sh 'terraform plan -out=tfplan' 
+            }
         }
         stage('Terraform Apply') {
             when { expression { params.TF_APPLY || params.TF_ALL } }
@@ -31,9 +37,28 @@ pipeline {
         stage('Terraform Destroy') {
             when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
-                input message: "Destroy all resources?"
-                sh 'terraform destroy -auto-approve'
+                stage('Init for Destroy') {
+                    steps { 
+                        sh 'terraform init -upgrade' 
+                    }
+                }
+                stage('Approval') {
+                    steps {
+                        input message: "Destroy all resources?"
+                    }
+                }
+                stage('Destroy') {
+                    steps {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
             }
+        }
+    }
+    post {
+        always {
+            sh 'rm -f tfplan || true'
+            sh 'terraform state list || true'
         }
     }
 }
