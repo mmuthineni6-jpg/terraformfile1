@@ -37,28 +37,14 @@ pipeline {
         stage('Terraform Destroy') {
             when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
-                stage('Init for Destroy') {
-                    steps { 
-                        sh 'terraform init -upgrade' 
-                    }
-                }
-                stage('Approval') {
-                    steps {
-                        input message: "Destroy all resources?"
-                    }
-                }
-                stage('Destroy') {
-                    steps {
-                        sh 'terraform destroy -auto-approve'
-                    }
-                }
+                input message: "Destroy all resources?"
+                sh 'terraform destroy -auto-approve'
             }
         }
     }
     post {
         always {
             sh 'rm -f tfplan || true'
-            sh 'terraform state list || true'
         }
     }
 }
