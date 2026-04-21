@@ -45,7 +45,6 @@ pipeline {
         stage('Terraform Apply') {
             when { expression { params.TF_APPLY || params.TF_ALL } }
             steps {
-                input message: 'Apply changes?'
                 sh 'terraform apply tfplan'
             }
         }
