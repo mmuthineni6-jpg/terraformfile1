@@ -1,5 +1,12 @@
 pipeline {
     agent any
+
+    environment {
+        AWS_ACCESS_KEY_ID     = credentials('aws-creds')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-creds')
+        AWS_DEFAULT_REGION    = 'us-west-1'
+    }
+
     parameters {
         booleanParam(name: 'TF_INIT', defaultValue: true, description: '')
         booleanParam(name: 'TF_VALIDATE', defaultValue: true, description: '')
@@ -8,25 +15,33 @@ pipeline {
         booleanParam(name: 'TF_DESTROY', defaultValue: false, description: '')
         booleanParam(name: 'TF_ALL', defaultValue: false, description: '')
     }
+
     stages {
+
         stage('Terraform Init') {
             when { expression { params.TF_INIT || params.TF_ALL || params.TF_DESTROY } }
-            steps { 
-                sh 'terraform init -upgrade' 
+            steps {
+                sh '''
+                    aws sts get-caller-identity
+                    terraform init -upgrade
+                '''
             }
         }
+
         stage('Terraform Validate') {
             when { expression { params.TF_VALIDATE || params.TF_ALL } }
-            steps { 
-                sh 'terraform validate' 
+            steps {
+                sh 'terraform validate'
             }
         }
+
         stage('Terraform Plan') {
             when { expression { params.TF_PLAN || params.TF_ALL } }
-            steps { 
-                sh 'terraform plan -out=tfplan' 
+            steps {
+                sh 'terraform plan -out=tfplan'
             }
         }
+
         stage('Terraform Apply') {
             when { expression { params.TF_APPLY || params.TF_ALL } }
             steps {
@@ -34,6 +49,7 @@ pipeline {
                 sh 'terraform apply tfplan'
             }
         }
+
         stage('Terraform Destroy') {
             when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
@@ -42,10 +58,10 @@ pipeline {
             }
         }
     }
+
     post {
         always {
             sh 'rm -f tfplan || true'
         }
     }
 }
-
