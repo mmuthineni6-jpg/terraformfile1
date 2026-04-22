@@ -72,7 +72,7 @@ module "eks" {
 
   eks_managed_node_groups = {
   frontend = {
-    name = "frontend"
+    name = "frontend-Backend"
 
     instance_types = ["t3.small"]
 
@@ -81,18 +81,6 @@ module "eks" {
     desired_size = 1
 
     bootstrap_extra_args = "--kubelet-extra-args '--node-labels=application=reactjs'"
-  }
-
-  java-backend = {
-    name = "java-backend"
-
-    instance_types = ["t3.small"]
-
-    min_size     = 1
-    max_size     = 2
-    desired_size = 1
-
-    bootstrap_extra_args = "--kubelet-extra-args '--node-labels=application=java'"
   }
 
   database = {
