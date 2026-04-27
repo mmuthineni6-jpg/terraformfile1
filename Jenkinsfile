@@ -52,7 +52,6 @@ pipeline {
         stage('Terraform Destroy') {
             when { expression { params.TF_DESTROY || params.TF_ALL } }
             steps {
-                input message: "Destroy all resources?"
                 sh 'terraform destroy -auto-approve'
             }
         }
