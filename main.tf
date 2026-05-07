@@ -15,7 +15,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "HM"
+  cluster_name = "sri-eks-2"
 }
 
 
@@ -23,7 +23,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.8.1"
 
-  name = "HM-vpc"
+  name = "sri-eks-2-vpc"
 
   cidr = "10.0.0.0/16"
   azs = data.aws_availability_zones.available.names
